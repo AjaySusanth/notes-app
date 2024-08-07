@@ -10,6 +10,7 @@ import ToastMsg from '../../components/ToastMsg'
 import EmptyCard from '../../components/EmptyCard'
 import addNotesImg from '../../assets/add-note.svg'
 import noNotesImg from '../../assets/no-notes.svg'
+import Loader from '../../components/Loader'
 
 const Home = () => {
 
@@ -50,6 +51,7 @@ const Home = () => {
   }
   
   const [allNotes,setAllNotes] = useState([])
+  const [loading, setLoading] = useState(true); // Loading state
 
     // get all notes api call
   const getAllNotes = async()=>{
@@ -62,6 +64,8 @@ const Home = () => {
     }
     catch(err){
       console.log('An unexpected error occured')
+    } finally{
+      setLoading(false);
     }
   }
 
@@ -116,7 +120,7 @@ const Home = () => {
         isPinned :!noteData.isPinned
       })
       if (res.data && res.data.note){
-        showToastMessage('Note pinned successfully')
+        showToastMessage('Note updated successfully')
         getAllNotes()
       }
     }
@@ -153,36 +157,40 @@ const Home = () => {
     })
   }
 
+  if (loading) {
+    return <Loader />;
+  }
 
   return (
     <>
       <Navbar userInfo={userInfo} onSearch={onSearch} handleClearSearch={handleClearSearch}/>
-      <div className="container mx-auto">
-        {allNotes.length>0 ?
+      
+        {
+        allNotes.length>0 ?
+        
         (
-          <div className="grid grid-cols-3 gap-4 mt-8">
+          <div className="container mx-auto flex justify-center sm:justify-start">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-8 justify-center">
 
-          {allNotes.map((item,index)=>(
-              <NoteCard
-              key={item._id}
-              title={item.title}
-              date={item.createdOn}
-              content={item.content}
-              tags={item.tags}
-              isPinned={item.isPinned}
-              onEdit={()=> handleEdit(item)}
-              onDelete={()=> deleteNote(item)}
-              onPinNote={()=>updateIsPinned(item)}
-              />
-          ))}
-          
+            {allNotes.map((item,index)=>(
+                <NoteCard
+                key={item._id}
+                title={item.title}
+                date={item.createdOn}
+                content={item.content}
+                tags={item.tags}
+                isPinned={item.isPinned}
+                onEdit={()=> handleEdit(item)}
+                onDelete={()=> deleteNote(item)}
+                onPinNote={()=>updateIsPinned(item)}
+                />
+            ))}
+            
+            </div>
           </div>
         )
           : (<EmptyCard img={isSearch ? noNotesImg : addNotesImg} message={isSearch ? 'No notes were found matching your search':'Add your First Note by clicking the add button. Lets get started'}/>)
         }
-        
-      </div>
-      
 
       <button className='w-16 h-16 flex items-center justify-center rounded-2xl bg-primary hover:bg-blue-600 absolute right-10 bottom-10' onClick={()=>{
         setOpenModal({isShown:true, type:"add",data:null})
@@ -200,7 +208,7 @@ const Home = () => {
       }}
 
       contentLabel=""
-      className="w-[40%] max-h-3/4 bg-white rounded-md mx-auto mt-14 p-5 overflow-auto"
+      className="w-[90%] sm:w-[60%] lg:w-[40%] max-h-3/4 bg-white rounded-md mx-auto  mt-14 p-5 overflow-auto"
       >
         <AddEditNotes 
         type={openModal.type}

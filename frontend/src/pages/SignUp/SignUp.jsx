@@ -4,6 +4,7 @@ import Navbar from "../../components/Navbar"
 import PasswordInput from "../../components/PasswordInput"
 import { validateEmail } from "../../utils/helper"
 import axiosInstance from "../../utils/axiosInstance"
+import Loader from "../../components/Loader"
 
 const SignUp = () => {
 
@@ -11,6 +12,7 @@ const SignUp = () => {
   const [email,setEmail] = useState('')
   const [password,setPassword] = useState('')
   const [error,setError] = useState(null)
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate()
 
@@ -32,6 +34,7 @@ const SignUp = () => {
       return;
     }
     setError('')
+    setLoading(true)
 
     // signup api call
 
@@ -61,49 +64,55 @@ const SignUp = () => {
         console.log(err)
       }
     }
+    finally{
+      setLoading(false)
+    }
   }
 
 
   return (
     <>
       <Navbar/>
-
-      <div className="flex items-center justify-center mt-28">
+      {loading && <Loader/>}
+      <div className="flex items-center justify-center mt-28 px-3 sm:px-0">
         <div className="w-96 border rounded  bg-white px-7 py-10">
-          <form onSubmit={handleSignUp}>
+          {!loading && (
+            <form onSubmit={handleSignUp}>
 
-            <h4 className="text-2xl mb-7">Sign Up</h4>
+              <h4 className="text-2xl mb-7">Sign Up</h4>
 
-            <input
-            type="text"
-            placeholder="Name"
-            className="input-box"
-            value={name}
-            onChange={(e)=>setName(e.target.value)}
-            />
+              <input
+              type="text"
+              placeholder="Name"
+              className="input-box"
+              value={name}
+              onChange={(e)=>setName(e.target.value)}
+              />
 
-            <input
-            type="text"
-            placeholder="Email"
-            className="input-box"
-            value={email}
-            onChange={(e)=>setEmail(e.target.value)}
-            />
+              <input
+              type="text"
+              placeholder="Email"
+              className="input-box"
+              value={email}
+              onChange={(e)=>setEmail(e.target.value)}
+              />
 
-            <PasswordInput
-            value={password}
-            onChange={(e)=>setPassword(e.target.value)}
-            />
+              <PasswordInput
+              value={password}
+              onChange={(e)=>setPassword(e.target.value)}
+              />
 
-            {error && <p className="text-xs text-red-500 pb-1">{error}</p>}
+              {error && <p className="text-xs text-red-500 pb-1">{error}</p>}
 
-            <button type="submit" className="btn-primary">Sign Up</button>
+              <button type="submit" className="btn-primary">Sign Up</button>
 
-            <p className="text-sm text-center mt-4">Already have an account?{" "}
-            <Link to='/login' className="font-medium text-primary underline">Login</Link>
-            </p>
+              <p className="text-sm text-center mt-4">Already have an account?{" "}
+              <Link to='/login' className="font-medium text-primary underline">Login</Link>
+              </p>
 
-          </form>
+            </form>
+          )}
+          
         </div>
       </div>
     </>

@@ -14,7 +14,7 @@ const NoteCard = ({ title, date, content, tags, isPinned, onEdit, onDelete, onPi
                 onClick={onPinNote}/>
             </div>
 
-            <p className='text-xs text-slate-600 mt-2'>{content?.slice(0,60)}</p>
+            <p className='break-words text-xs text-slate-600 mt-2'>{content?.slice(0,60)}</p>
             <div className='flex items-center justify-between mt-2'>
                 <div className="text-xs text-slate-400">
                     {tags.map((tag)=> `#${tag} `)}
